@@ -1,6 +1,6 @@
 {
   "name": "jinja-loader",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A Jinja2 / Nunjucks loader for Webpack",
   "main": "index.js",
   "scripts": {
@@ -11,5 +11,22 @@
   "dependencies": {
     "loader-utils": "^0.2.6",
     "nunjucks": "^1.2.0"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pierreant-p/jinja-loader.git"
+  },
+  "keywords": [
+    "webpack",
+    "loader",
+    "jinja",
+    "jinja2",
+    "nunjucks",
+    "template"
+  ],
+  "bugs": {
+    "url": "https://github.com/pierreant-p/jinja-loader/issues"
+  },
+  "homepage": "https://github.com/pierreant-p/jinja-loader"
 }

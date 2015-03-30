@@ -1,56 +1,51 @@
 'use strict';
 
-var nunjucks = require( 'nunjucks' );
-var loaderUtils = require( 'loader-utils' );
+var nunjucks = require('nunjucks');
+var loaderUtils = require('loader-utils');
 
-// Look for nested dependencies in the compiled template
-var findNestedRequires = function ( source ) {
 
-    // find nested templates --> env.getTemplate( 'someTemplate.jinja', callback )
+var findNestedTemplates = function(source) {
 
-    var templateReg = /env\.getTemplate\(\"(.*?)\"/g;
-    var filterReg = /env\.getFilter\(\"require\"\)\.call\(context, \"(.*?)\"/g;
-    var match,
+    var templateReg = /env\.getTemplate\(\"(.*?)\"/g,
+        match,
         required = []; // list of already required resources
 
-    var regexps = [ templateReg, filterReg ];
-
-    regexps.forEach( function ( reg ) {
-
-        while ( ( match = reg.exec( source ) ) ) {
-            var templatePath = match[ 1 ];
-            if ( required.indexOf( templatePath ) === -1 ) {
-                required.push( templatePath );
-            }
+    while ((match = templateReg.exec(source))) {
+        var requiredPath = match[1];
+        if (required.indexOf(requiredPath) === -1) {
+            required.push(requiredPath);
         }
-
-    } );
+    }
 
     return required;
 };
 
 
-module.exports = function ( source, map ) {
+module.exports = function(source, map) {
 
-    if ( this.cacheable ) this.cacheable();
+    if (this.cacheable) this.cacheable();
 
-    var query = loaderUtils.parseQuery( this.query );
+    var query = loaderUtils.parseQuery(this.query);
     var root = query.root || '';
 
     // Name the template relatively to the `root`.
-    var compiledTemplate = nunjucks.precompileString( source, {
-        name: this.resourcePath.replace( root, '' )
-    } );
+    var compiledTemplate = nunjucks.precompileString(source, {
+        name: this.resourcePath.replace(root, '')
+    });
 
-    // Find template dependencides and add the corresponding requires in the output
-    var requires = findNestedRequires( compiledTemplate ),
+    // Find template dependenciees and add the corresponding requires in the output
+    var requires = findNestedTemplates(compiledTemplate),
         prefix = '';
-    requires.forEach( function ( requirePath ) {
+    requires.forEach(function(requirePath) {
         prefix += 'require("' + requirePath + '");\n';
-    } );
+    });
+
+    // Replace 'require' filter by a javascript require expression
+    var filterReg = /env\.getFilter\(\"require\"\)\.call\(context, \"(.*?)\"/g;
+    compiledTemplate = compiledTemplate.replace(filterReg, 'require("$1"');
 
     // return value
     var tpl = prefix + compiledTemplate;
 
-    this.callback( null, tpl, map );
+    this.callback(null, tpl, map);
 };
