@@ -10,7 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "loader-utils": "^0.2.6",
-    "nunjucks": "^1.2.0"
+    "nunjucks": "^1.2.0 || ^2.0.0"
   },
   "devDependencies": {},
   "repository": {
