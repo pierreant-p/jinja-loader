@@ -28,9 +28,16 @@ module.exports = function(source, map) {
     var query = loaderUtils.parseQuery(this.query);
     var root = query.root || '';
 
+    var env = new nunjucks.Environment(new nunjucks.FileSystemLoader(root));
+    if (query.config) {
+        var config = require(query.config);
+        config(env);
+    }
+
     // Name the template relatively to the `root`.
     var compiledTemplate = nunjucks.precompileString(source, {
-        name: this.resourcePath.replace(root, '')
+        name: this.resourcePath.replace(root, ''),
+        env: env
     });
 
     // Find template dependenciees and add the corresponding requires in the output
