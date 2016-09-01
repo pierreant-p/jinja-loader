@@ -92,6 +92,34 @@ module: {
 ...
 ```
 
+You can specify a `config` key with the path to a module for adding additional configuration to the nunjucks environment:
+```
+```javascript
+// nunjucks.loader.config.js
+const markdown = require('nunjucks-markdown');
+
+module.exports = function(env) {
+    markdown.register(env);
+}
+
+
+// webpack.config.js
+...
+module: {
+    loaders: [ {
+        // jinja/nunjucks templates
+        test: /\.jinja$/,
+        loader: 'jinja-loader',
+        query: {
+            root: /path/to/templates,
+            config: /path/to/nunjucks.loader.config.js
+        }
+    } ]
+}
+...
+```
+
+
 ## LICENSE
 
 MIT (http://www.opensource.org/licenses/mit-license.php)
