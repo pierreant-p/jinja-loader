@@ -1,6 +1,6 @@
 {
   "name": "jinja-loader",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A Jinja2 / Nunjucks loader for Webpack",
   "main": "index.js",
   "scripts": {
