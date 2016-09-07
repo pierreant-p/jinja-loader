@@ -2,6 +2,7 @@
 
 var nunjucks = require('nunjucks');
 var loaderUtils = require('loader-utils');
+var env, root;
 
 
 var findNestedTemplates = function(source) {
@@ -25,13 +26,15 @@ module.exports = function(source, map) {
 
     if (this.cacheable) this.cacheable();
 
-    var query = loaderUtils.parseQuery(this.query);
-    var root = query.root || '';
+    if (!env) {
+        var query = loaderUtils.parseQuery(this.query);
+        root = query.root || '';
 
-    var env = new nunjucks.Environment(new nunjucks.FileSystemLoader(root));
-    if (query.config) {
-        var config = require(query.config);
-        config(env);
+        env = new nunjucks.Environment(new nunjucks.FileSystemLoader(root));
+        if (query.config) {
+            var config = require(query.config);
+            config(env);
+        }
     }
 
     // Name the template relatively to the `root`.
