@@ -1,15 +1,18 @@
+/* jshint -W097 */
+/*globals require:false, module:false */
 'use strict';
 
 var nunjucks = require('nunjucks');
 var loaderUtils = require('loader-utils');
-var env, root;
+var env;
+var root;
 
 
 var findNestedTemplates = function(source) {
 
-    var templateReg = /env\.getTemplate\(\"(.*?)\"/g,
-        match,
-        required = []; // list of already required resources
+    var templateReg = /env\.getTemplate\(\"(.*?)\"/g;
+    var match;
+    var required = []; // list of already required resources
 
     while ((match = templateReg.exec(source))) {
         var requiredPath = match[1];
@@ -27,13 +30,21 @@ module.exports = function(source, map) {
     if (this.cacheable) this.cacheable();
 
     if (!env) {
-        var query = loaderUtils.parseQuery(this.query);
-        root = query.root || '';
+        // Need to copy because options is read-only.
+        // See note in https://github.com/webpack/loader-utils/
+        var options = Object.assign(
+            {
+                root: ''
+            },
+            loaderUtils.getOptions(this)
+        );
+        options.root = options.root.slice();
 
+        root = options.root || '';
         env = new nunjucks.Environment(new nunjucks.FileSystemLoader(root));
-        if (query.config) {
-            var config = require(query.config);
-            config(env);
+        // Handle additional configuration to the nunjucks environment
+        if (options.config) {
+            options.config(env);
         }
     }
 
@@ -44,8 +55,8 @@ module.exports = function(source, map) {
     });
 
     // Find template dependenciees and add the corresponding requires in the output
-    var requires = findNestedTemplates(compiledTemplate),
-        prefix = '';
+    var requires = findNestedTemplates(compiledTemplate);
+    var prefix = '';
     requires.forEach(function(requirePath) {
         prefix += 'require("' + requirePath + '");\n';
     });

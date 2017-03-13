@@ -1,6 +1,6 @@
 {
   "name": "jinja-loader",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "A Jinja2 / Nunjucks loader for Webpack",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,7 @@
   "author": "Pierre-Antoine Passet @pierreant_p",
   "license": "MIT",
   "dependencies": {
-    "loader-utils": "^0.2.6",
+    "loader-utils": "^1.0.2",
     "nunjucks": "^1.2.0 || ^2.0.0 || ^3.0.0"
   },
   "devDependencies": {},
